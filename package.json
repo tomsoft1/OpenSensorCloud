@@ -1,0 +1,25 @@
+{
+  "name": "opensensorchatgpt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.3.8",
+    "@types/express": "^4.17.19",
+    "@types/mocha": "^10.0.2",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^20.8.6",
+    "@types/supertest": "^2.0.14",
+    "@types/winston": "^2.4.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "supertest": "^6.3.3"
+  }
+}
