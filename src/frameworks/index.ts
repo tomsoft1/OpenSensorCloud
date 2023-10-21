@@ -35,11 +35,13 @@ const recordRepository = new MongoDBRecordRepository();
 
 // Define a route to save records
 app.post('/device/:id', async (req, res) => {
-  console.log('received',req.body)
-  const { timestamp, data } = req.body;
+  console.log('received...',req.body)
+  let arrayOfMeasures:any[] =  req.body;
+
   try {
+    console.log('la...')
     const saveRecordUseCase = new SaveMeasureUseCase(recordRepository)
-    const createdRecord = await saveRecordUseCase.execute(timestamp, data);
+    const createdRecord = await saveRecordUseCase.execute(new Date(), req.params.id, arrayOfMeasures);
     res.status(201).json(createdRecord);
 
     // Log successful record creation

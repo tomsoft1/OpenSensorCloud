@@ -9,7 +9,8 @@ mongoose.connect('mongodb://localhost:27017/opensensorchatgpt', {
 // Définissez un schéma Mongoose pour le modèle
 const MeasureSchema = new Schema<Measure>({
     timestamp: Date,
-    data: String,
+    deviceId:String,
+    data:Schema.Types.Mixed
     // ... autres champs du modèle
   });
 
