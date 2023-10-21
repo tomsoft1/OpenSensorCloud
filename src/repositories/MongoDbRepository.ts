@@ -3,7 +3,7 @@ import { MeasureRepository } from "../interfaces/MesureRepository";
 import mongoose, { Schema } from 'mongoose';
 
 // Define the MongoDB connection
-mongoose.connect('mongodb://localhost:27017/opensensorchatgpt', {
+mongoose.connect('mongodb://localhost:27017/opensensorcloud', {
 });
 
 // Définissez un schéma Mongoose pour le modèle
@@ -24,5 +24,9 @@ export class MongoDBRecordRepository implements MeasureRepository {
     async create(record: Measure) {
       const model = new MeasureDb(record);
       return model.save();
+    }
+
+    async getAll(){
+      return MeasureDb.find()
     }
   }

@@ -53,8 +53,26 @@ app.post('/device/:id', async (req, res) => {
   }
 });
 
+app.get('/device/:id', async (req, res) => {
+  console.log('received...')
+  let arrayOfMeasures:any[] =  req.body;
+
+  try {
+    console.log('la...')
+    const saveRecordUseCase = new SaveMeasureUseCase(recordRepository)
+    const createdRecord = await saveRecordUseCase.getAll();
+    res.status(201).json(createdRecord);
+
+    // Log successful record creation
+   // logger.info('Record created', { timestamp, data });
+  } catch (error) {
+    // Log errors and send an error response
+    logger.error('Error creating measure', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 // Start the Express server
-const port = 3000;
+const port = 8003;
 
 // Export the Express app for testing
 export = app;
