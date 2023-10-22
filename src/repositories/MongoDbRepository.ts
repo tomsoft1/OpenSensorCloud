@@ -1,3 +1,4 @@
+import { logger } from "../common/logger";
 import { Measure } from "../domain/Measure";
 import { MeasureRepository } from "../interfaces/MesureRepository";
 import mongoose, { Schema } from 'mongoose';
@@ -27,6 +28,7 @@ export class MongoDBRecordRepository implements MeasureRepository {
     }
 
     async getAll(query:any,limit=1000){
+      logger.info('getAll:'+limit)
       return MeasureDb.find().sort({timestamp:-1}).limit(limit)
     }
   }
