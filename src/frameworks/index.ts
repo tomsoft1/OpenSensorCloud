@@ -3,6 +3,7 @@ import express from 'express';
 import winston from 'winston';
 import { MongoDBRecordRepository } from '../repositories/MongoDbRepository';
 import { SaveMeasureUseCase } from '../useCases/saveMeasureUseCase';
+const cors = require('cors');
 
 // Create an instance of the Winston logger
 const logger = winston.createLogger({
@@ -29,7 +30,9 @@ const logger = winston.createLogger({
 const app = express();
 //app.use(bodyParser.json());
 app.use(express.json({type:'*/*'}))
-
+app.use(cors({
+  origin: '*'
+}));
 // Create the repository instance
 const recordRepository = new MongoDBRecordRepository();
 
@@ -60,7 +63,13 @@ app.get('/device/:id', async (req, res) => {
   try {
     console.log('la...')
     const saveRecordUseCase = new SaveMeasureUseCase(recordRepository)
-    const createdRecord = await saveRecordUseCase.getAll();
+    const limitStr = req.query['limit']
+    let limit=1000
+    if(limitStr){
+      limit =  Number.parseInt(limitStr as any as string)
+    }
+   
+    const createdRecord = await saveRecordUseCase.getAll({}, limit);
     res.status(201).json(createdRecord);
 
     // Log successful record creation

@@ -8,8 +8,8 @@ mongoose.connect('mongodb://localhost:27017/opensensorcloud', {
 
 // Définissez un schéma Mongoose pour le modèle
 const MeasureSchema = new Schema<Measure>({
-    timestamp: Date,
-    deviceId:String,
+    timestamp: {type:Date,index:-1},
+    deviceId:{type:String,index:true},
     data:Schema.Types.Mixed
     // ... autres champs du modèle
   });
@@ -26,7 +26,7 @@ export class MongoDBRecordRepository implements MeasureRepository {
       return model.save();
     }
 
-    async getAll(){
-      return MeasureDb.find()
+    async getAll(query:any,limit=1000){
+      return MeasureDb.find().sort({timestamp:-1}).limit(10000)
     }
   }

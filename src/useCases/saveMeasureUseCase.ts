@@ -12,8 +12,8 @@ export class SaveMeasureUseCase {
       return await this.recordRepository.create(record);
     }
 
-    async getAll():Promise<Array<Measure>>{
-      return this.recordRepository.getAll()
+    async getAll(query:any,limit=1000):Promise<Array<Measure>>{
+      return this.recordRepository.getAll(query,limit)
     }
 
   }
