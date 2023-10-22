@@ -27,6 +27,6 @@ export class MongoDBRecordRepository implements MeasureRepository {
     }
 
     async getAll(query:any,limit=1000){
-      return MeasureDb.find().sort({timestamp:-1}).limit(10000)
+      return MeasureDb.find().sort({timestamp:-1}).limit(limit)
     }
   }

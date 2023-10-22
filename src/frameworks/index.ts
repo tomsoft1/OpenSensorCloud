@@ -68,7 +68,7 @@ app.get('/device/:id', async (req, res) => {
     if(limitStr){
       limit =  Number.parseInt(limitStr as any as string)
     }
-   
+    logger.info('Limit:'+limit)
     const createdRecord = await saveRecordUseCase.getAll({}, limit);
     res.status(201).json(createdRecord);
 
