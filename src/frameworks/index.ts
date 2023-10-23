@@ -4,6 +4,7 @@ import winston from 'winston';
 import { MongoDBRecordRepository } from '../repositories/MongoDbRepository';
 import { SaveMeasureUseCase } from '../useCases/saveMeasureUseCase';
 import { logger } from '../common/logger';
+import { Socket } from 'socket.io';
 const cors = require('cors');
 
 // Create Express application
@@ -16,17 +17,18 @@ app.use(cors({
 // Create the repository instance
 const recordRepository = new MongoDBRecordRepository();
 
+
+
 // Define a route to save records
 app.post('/device/:id', async (req, res) => {
-  console.log('received...',req.body)
+  logger.info('received...',req.body)
   let arrayOfMeasures:any[] =  req.body;
 
   try {
-    console.log('la...')
     const saveRecordUseCase = new SaveMeasureUseCase(recordRepository)
     const createdRecord = await saveRecordUseCase.execute(new Date(), req.params.id, arrayOfMeasures);
     res.status(201).json(createdRecord);
-
+    sendAll({device:req.params.id,action:'INSERT'})
     // Log successful record creation
    // logger.info('Record created', { timestamp, data });
   } catch (error) {
@@ -59,11 +61,43 @@ app.get('/device/:id', async (req, res) => {
   }
 });
 // Start the Express server
-const port = 8003;
+const port = process.env.PORT || 8003;
+
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server,{
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+let sockets:Array<Socket> = []
+
+io.on('connection', (socket:Socket) => {
+  logger.info('New client connected');
+  sockets.push(socket)
+  // Send a message to the client
+  socket.emit('message', 'Hello from Socket.io server');
+
+  socket.on('disconnect', () => {
+    logger.warn('Client disconnected');
+    sockets = sockets.filter( elem => elem!= socket)
+  });
+});
+
+function sendAll(message:any){
+  logger.info('Send all %o to length:'+sockets.length, message)
+  sockets.forEach(socket => {
+    socket.emit('message',message)})
+}
+
+server.listen(port, () => {
+  logger.info(`Server is running on http://localhost:${port}`);
+});
+
 
 // Export the Express app for testing
 export = app;
 
-app.listen(port, () => {
-  logger.info(`Server is running on http://localhost:${port}`);
-});
+
