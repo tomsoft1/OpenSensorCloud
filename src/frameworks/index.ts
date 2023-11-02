@@ -4,6 +4,7 @@ import { SaveMeasureUseCase } from '../useCases/saveMeasureUseCase';
 import { logger } from '../common/logger';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
+var morgan = require('morgan')
 import cors from 'cors';
 
 // Create Express application
@@ -12,6 +13,7 @@ app.use(express.json({ type: '*/*' }))
 app.use(cors({
   origin: '*'
 }));
+app.use(morgan('dev'))
 // Create the repository instance
 const recordRepository = new MongoDBRecordRepository();
 // Define a route to save records

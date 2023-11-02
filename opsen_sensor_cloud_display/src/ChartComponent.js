@@ -9,6 +9,7 @@ const ChartComponent = () => {
   const [chartData, setChartData] = useState([]);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const [rerender, setRerender] = useState(false);
+  const [watt, setWatt] = useState([]);
 
   //  const SERVER_URL = 'http://localhost:8003';
   const SERVER_URL = 'http://api.opensensorcloud.com';
@@ -20,7 +21,12 @@ const ChartComponent = () => {
     // Listen for messages from the server
     socket.on('message', (message) => {
       console.log('Message from server:', message);
+      if(message.message){
+        console.log("Data:",message.message.data[3].value);
+              setWatt(message.message.data[3].value)
   //    fetchData();
+        
+      }
     });
 
     // Cleanup
@@ -87,7 +93,7 @@ const ChartComponent = () => {
   };
   return (
     <div  >
-      <PowerJauge value={10} ></PowerJauge>
+      <PowerJauge value={watt} ></PowerJauge>
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
