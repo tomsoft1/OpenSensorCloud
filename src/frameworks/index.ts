@@ -6,6 +6,16 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 var morgan = require('morgan')
 import cors from 'cors';
+const mqtt = require('mqtt')
+
+
+// MQTT Broquer
+const protocol = 'mqtt'
+const host = 'mqtt.myapp.fr'
+const mqtt_port = '1883'
+const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+
+const connectUrl = `${protocol}://${host}:${mqtt_port}`
 
 // Create Express application
 const app = express();
@@ -16,6 +26,12 @@ app.use(cors({
 app.use(morgan('dev'))
 // Create the repository instance
 const recordRepository = new MongoDBRecordRepository();
+
+app.get('/test',async (req, res) => {
+  sendAll("test","YO",{a:"b"})
+  res.status(200).send("ok");
+})
+
 // Define a route to save records
 app.post('/device/:id', async (req, res) => {
   logger.info('received...', req.body)
@@ -25,7 +41,7 @@ app.post('/device/:id', async (req, res) => {
     const saveRecordUseCase = new SaveMeasureUseCase(recordRepository)
     const createdRecord = await saveRecordUseCase.execute(new Date(), req.params.id, arrayOfMeasures);
     res.status(200).json(createdRecord);
-    sendAll({ device: req.params.id, action: 'INSERT', message: createdRecord })
+    sendAll(req.params.id, "INSERT" , createdRecord)
   } catch (error) {
     // Log errors and send an error response
     logger.error('Error creating measure', error);
@@ -80,12 +96,31 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
-function sendAll(message: any) {
+function sendAll(device_id:string, action:string, message: any) {
   logger.info('Send all %o to length:' + sockets.length, message)
   sockets.forEach(socket => {
-    socket.emit('message', message)
+    socket.emit('message', { device: device_id, action: action, message: message })
   })
+  client.publish("device/"+device_id+"/"+action,JSON.stringify(message))
 }
+
+
+const client = mqtt.connect(connectUrl, {
+  clientId,
+  clean: true,
+  connectTimeout: 4000,
+  reconnectPeriod: 1000,
+})
+
+client.on('connect', () => {
+  console.log('Connected')
+  client.subscribe(["register/#"], () => {
+    console.log(`Subscribe to topic'`)
+  })
+  client.on('message', (topic:string, payload: { toString: () => any; }) => {
+    console.log('Received Message:', topic, payload.toString())
+  })
+})
 
 server.listen(port, () => {
   logger.info(`Server is running on http://localhost:${port}`);
