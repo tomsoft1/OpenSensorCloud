@@ -24,7 +24,7 @@ const ChartComponent = () => {
       if(message.message){
         console.log("Data:",message.message.data[3].value);
               setWatt(message.message.data[3].value)
-  //    fetchData();
+     fetchData();
         
       }
     });
@@ -37,7 +37,7 @@ const ChartComponent = () => {
 
   useEffect(() => {
     window.addEventListener('keypress', e => {
-      // forceUpdate()
+      forceUpdate()
       setRerender(!rerender);     //whenever you want to re-render
       setChartData()
     });
@@ -45,13 +45,13 @@ const ChartComponent = () => {
 
   const fetchData = () => {    // Fetch data from API
     //    fetch('http://api.opensensorcloud.com/device/1?limit=14000')
-    fetch(SERVER_URL + '/device/1?limit=14000')
+    fetch(SERVER_URL + '/device/1?limit=6000')
       .then(response => response.json())
       .then(data => {
         console.log(data)
         //    data =  data.slice(-1000)
         // Extract relevant data (for demonstration, let's use the 'id' field)
-        const res = ['watt_0', 'watt_1', 'watt_2', 'watt'].map((elem, i) => {
+        const res = ['watt_0 (piscine, cuisine)', 'watt_1 (télé, caftiere?)', 'watt_2', 'watt'].map((elem, i) => {
           return {
             name: elem,
             data: data.map(item => [moment(item.timestamp).add(2, 'hours').valueOf(), item.data[i].value])
