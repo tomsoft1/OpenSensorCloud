@@ -12,7 +12,8 @@ const ChartComponent = () => {
   const [watt, setWatt] = useState([]);
 
   //  const SERVER_URL = 'http://localhost:8003';
-  const SERVER_URL = 'http://api.opensensorcloud.com';
+  // Sans protocole : http ou https selon la page (le site est passé en HTTPS le 2026-11-11).
+  const SERVER_URL = '//api.opensensorcloud.com';
 
   useEffect(() => {
     // Connect to Socket.io server
